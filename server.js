@@ -21,10 +21,17 @@ const server = http.listen(port, () => {
     console.log(`listening on *: ${port}`);
 });
 
-io.sockets.on('connection', function (socket) {
+io.use(require("./utils/authorize"));
 
-    socket.on('message', function (message) {
-        io.emit('message', message);
+io.sockets.on('connection', (socket) => {
+
+    console.log(socket.decoded);
+
+    socket.on('message', (data) => {
+        io.emit('message', {
+            user: socket.decoded,
+            message: data.message
+        });
     });
 
 });
